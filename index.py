@@ -47,7 +47,7 @@ def load(url):
 if __name__ == "__main__":
     import sys
     url = sys.argv[1]
-    assert url.startswith("http://" or "file://")
+    assert url.startswith("http://")
     url = url[len("http://"):]
     host, path = url.split("/", 1)
     path = "/" + path
