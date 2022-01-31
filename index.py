@@ -1,10 +1,10 @@
 from email import header
 from ensurepip import version
 import socket
-assert url.startswith("http://")
-url = url[len("http://"):]
-host, path = url.split("/", 1)
-path = "/" + path
+#assert url.startswith("http://")
+#url = url[len("http://"):]
+#host, path = url.split("/", 1)
+#path = "/" + path
 
 s = socket.socket(
     family=socket.AF_INET,
