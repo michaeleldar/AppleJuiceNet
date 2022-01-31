@@ -13,7 +13,7 @@ s = socket.socket(
 
 def request(url):
     s.connect(("example.org", 80))
-    s.send(b"GET /index.html HTTP/1.0\r\n" + b"Host: example.org\r\n\r\n")
+    s.send(b"GET /index.html HTTP/1.0\r\n" + b"Host: example.org\r\n", b"close\r\n\r\n")
     response = s.makefile("r", encoding="utf8", newline="\r\n")
     statusline = response.readline()
     version, status, explanation = statusline.split(" ", 2)
