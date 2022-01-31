@@ -29,8 +29,22 @@ body = response.read()
 s.close
 
 def request(url):
+    return headers, body
+
+def show(body):
     in_angle = False
     for c in body:
         if c == "<":
             in_angle = True
-    return headers, body
+        elif c == ">":
+            in_angle = False
+        elif not in_angle:
+            print(c, end="")
+
+def load(url):
+    headers, body = request(url)
+    show(body)
+
+if __name__ == "__main__":
+    import sys
+    load(sys.argv[1])
