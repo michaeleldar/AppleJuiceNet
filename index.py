@@ -54,4 +54,8 @@ if __name__ == "__main__":
     url = url[len("http://"):]
     host, path = url.split("/", 1)
     path = "/" + path
+    port = 80 if scheme == "http" else 443
+    if scheme == "https":
+        ctx = ssl.create_default_context()
+        s = ctx.wrap_socket(s, server_hostname=host)
     load(sys.argv[1])
