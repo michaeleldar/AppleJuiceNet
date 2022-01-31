@@ -1,6 +1,7 @@
 from email import header
 from ensurepip import version
 import socket
+import ssl
 #assert url.startswith("http://")
 #url = url[len("http://"):]
 #host, path = url.split("/", 1)
@@ -47,8 +48,9 @@ def load(url):
 
 if __name__ == "__main__":
     import sys
-    url = sys.argv[1]
-    assert url.startswith("http://")
+    scheme, url = sys.argv[1].split("://", 1)
+    assert scheme in ["http", "https"], \
+        "Unknown scheme {}".format(scheme)
     url = url[len("http://"):]
     host, path = url.split("/", 1)
     path = "/" + path
