@@ -2,17 +2,14 @@ from email import header
 from ensurepip import version
 import socket
 import ssl
-#assert url.startswith("http://")
-#url = url[len("http://"):]
-#host, path = url.split("/", 1)
-#path = "/" + path
+import sys
+
 
 s = socket.socket(
     family=socket.AF_INET,
     type=socket.SOCK_STREAM,
     proto=socket.IPPROTO_TCP,
 )
-
 s.connect(("example.org", 80))
 s.send(b"GET /index.html HTTP/1.0\r\n" + b"Host: example.org\r\n\r\n")
 response = s.makefile("r", encoding="utf8", newline="\r\n")
@@ -48,14 +45,12 @@ def load(url):
 
 if __name__ == "__main__":
     import sys
-    scheme, url = sys.argv[1].split("://", 1)
-    assert scheme in ["http", "https"], \
-        "Unknown scheme {}".format(scheme)
+    url = sys.argv[1]
+    assert url.startswith("http://")
     url = url[len("http://"):]
     host, path = url.split("/", 1)
     path = "/" + path
-    port = 80 if scheme == "http" else 443
-    if scheme == "https":
-        ctx = ssl.create_default_context()
-        s = ctx.wrap_socket(s, server_hostname=host)
+    if ":" in host:
+        host, port = host.split(":", 1)
+        port = int(port)
     load(sys.argv[1])
