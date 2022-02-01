@@ -62,7 +62,19 @@ def lex(body):
 WIDTH, HEIGHT = 800, 600
 HSTEP, VSTEP = 13, 18
 
-SCROLL_STEP
+SCROLL_STEP = 100
+
+def layout(text):
+    display_list = []
+    cursor_x, cursor_y = HSTEP, VSTEP
+    for c in text:
+        display_list.append((cursor_x, cursor_y, c))
+        cursor_x += HSTEP
+        if cursor_x >= WIDTH - HSTEP:
+            cursor_y += VSTEP
+            cursor_x += HSTEP
+        breakpoint("layout", display_list)
+    return display_list
 
 class Browser:
     def __init__(self):
@@ -73,11 +85,18 @@ class Browser:
             height=HEIGHT
         )
         self.canvas.pack()
+        self.scroll = 0
+        self.window.bind("<DOWN>", self.scrolldown)
     
     def load(self, url):
-        text.split(" ")
-        for c in text:
-            self.canvas.create_text(100, 100, text=c)
+        headers, body = request(url)
+        text = lex(body)
+        self.display_list = layout(text)
+        self.draw()
+
+    def draw(self):
+        self.canvas.delete("all")
+        
 
 
 
