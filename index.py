@@ -96,26 +96,34 @@ class Browser:
 
     def draw(self):
         self.canvas.delete("all")
-        
+        for x, y, c in self.display_list:
+            breakpoint("draw")
+            if y > self.scroll + HEIGHT: continue
+            if y + VSTEP < self.scroll: continue
+            self.canvas.create_text(x, y - self.scroll, text=c)
+
+    def scrolldown(self, e):
+        self.scroll += SCROLL_STEP
+        self.draw()
 
 
 
 
 
-def load(url):
-    global text
-    headers, body = request(url)
-    text = lex(body)
+####def load(url):
+    ###global text
+    ##headers, body = request(url)
+    #text = lex(body)
 
 if __name__ == "__main__":
     import sys
-    url = sys.argv[1]
-    assert url.startswith("http://")
-    url = url[len("http://"):]
-    host, path = url.split("/", 1)
-    path = "/" + path
-    if ":" in host:
-        host, port = host.split(":", 1)
-        port = int(port)
+    ####url = sys.argv[1]
+    ###assert url.startswith("http://")
+    ##url = url[len("http://"):]
+    #host, path = url.split("/", 1)
+    ####path = "/" + path
+    ###if ":" in host:
+        ##host, port = host.split(":", 1)
+        #port = int(port)
     Browser().load(sys.argv[1])
     tkinter.mainloop()
