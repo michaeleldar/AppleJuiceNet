@@ -86,7 +86,7 @@ class Browser:
         )
         self.canvas.pack()
         self.scroll = 0
-        self.window.bind("<DOWN>", self.scrolldown)
+        self.window.bind("<Down>", self.scrolldown)
     
     def load(self, url):
         headers, body = request(url)
