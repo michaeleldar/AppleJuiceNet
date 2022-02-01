@@ -1,8 +1,12 @@
+from curses import window
 from email import header
 from ensurepip import version
 import socket
-import ssl
 import sys
+import tkinter
+
+window = tkinter.Tk()
+tkinter.mainloop()
 
 
 s = socket.socket(
