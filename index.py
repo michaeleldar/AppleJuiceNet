@@ -1,21 +1,23 @@
-from curses import window
-from email import header
-from ensurepip import version
 import socket
 import sys
 import tkinter
 
-window = tkinter.Tk()
-tkinter.mainloop()
-
-
-s = socket.socket(
-    family=socket.AF_INET,
-    type=socket.SOCK_STREAM,
-    proto=socket.IPPROTO_TCP,
-)
-
 def request(url):
+    scheme, url = url.split("://", 1)
+    assert scheme in ["http", "https"], \
+        "Unknown scheme {}".format(scheme)
+    
+    if ("/" in url):
+        host, path = url.split("/", 1)
+        path = "/" + path
+    else:
+        host = url
+        path = '/'
+    port = 80 if scheme == "http" else 443
+
+    if ":" in host:
+        host, port = host.split(":", 1)
+        port = int(port)
     s.connect(("example.org", 80,))
     s.send(b"GET /index.html HTTP/1.0\r\n" + b"Host: example.org\r\n\r\n")
     response = s.makefile("r", encoding="utf8", newline="\r\n")
@@ -34,7 +36,34 @@ def request(url):
 
     return headers, body
 
-def show(body):
+WIDTH, HEIGHT = 800, 600
+text = ""
+
+s = socket.socket(
+    family=socket.AF_INET,
+    type=socket.SOCK_STREAM,
+    proto=socket.IPPROTO_TCP,
+)
+
+class Browser:
+    def __init__(self):
+        self.window = tkinter.Tk()
+        self.canvas = tkinter.Canvas(
+            self.window,
+            width=WIDTH,
+            height=HEIGHT
+        )
+        self.canvas.pack()
+    
+    def load(self, url):
+        text.split(" ")
+        for c in text:
+            self.canvas.create_text(100, 100, text=c)
+
+
+
+def lex(body):
+    text = ""
     in_angle = False
     for c in body:
         if c == "<":
@@ -42,11 +71,13 @@ def show(body):
         elif c == ">":
             in_angle = False
         elif not in_angle:
-            print(c, end="")
+            text += c
+        return text
 
 def load(url):
+    global text
     headers, body = request(url)
-    show(body)
+    text = lex(body)
 
 if __name__ == "__main__":
     import sys
@@ -58,4 +89,5 @@ if __name__ == "__main__":
     if ":" in host:
         host, port = host.split(":", 1)
         port = int(port)
-    load(sys.argv[1])
+    Browser().load(sys.argv[1])
+    tkinter.mainloop()
