@@ -4,7 +4,7 @@ import tkinter
 
 def request(url):
     scheme, url = url.split("://", 1)
-    assert scheme in ["http", "https"], \
+    assert scheme in ["http"], \
         "Unknown scheme {}".format(scheme)
     
     if ("/" in url):
@@ -18,8 +18,16 @@ def request(url):
     if ":" in host:
         host, port = host.split(":", 1)
         port = int(port)
-    s.connect(("example.org", 80,))
-    s.send(b"GET /index.html HTTP/1.0\r\n" + b"Host: example.org\r\n\r\n")
+    
+
+    s = socket.socket(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+    )
+
+    s.connect((host, port))
+    s.send(("GET {} HTTP/1.0\r\n".format(path) + "Host: {}\r\n\r\n".format(host)).encode("utf8"))
     response = s.makefile("r", encoding="utf8", newline="\r\n")
     statusline = response.readline()
     version, status, explanation = statusline.split(" ", 2)
@@ -36,14 +44,25 @@ def request(url):
 
     return headers, body
 
-WIDTH, HEIGHT = 800, 600
-text = ""
 
-s = socket.socket(
-    family=socket.AF_INET,
-    type=socket.SOCK_STREAM,
-    proto=socket.IPPROTO_TCP,
-)
+
+
+def lex(body):
+    text = ""
+    in_angle = False
+    for c in body:
+        if c == "<":
+            in_angle = True
+        elif c == ">":
+            in_angle = False
+        elif not in_angle:
+            text += c
+        return text
+
+WIDTH, HEIGHT = 800, 600
+HSTEP, VSTEP = 13, 18
+
+SCROLL_STEP
 
 class Browser:
     def __init__(self):
@@ -62,17 +81,7 @@ class Browser:
 
 
 
-def lex(body):
-    text = ""
-    in_angle = False
-    for c in body:
-        if c == "<":
-            in_angle = True
-        elif c == ">":
-            in_angle = False
-        elif not in_angle:
-            text += c
-        return text
+
 
 def load(url):
     global text
